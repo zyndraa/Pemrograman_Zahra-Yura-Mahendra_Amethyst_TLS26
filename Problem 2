@@ -1,0 +1,67 @@
+/*
+    Problem 2: Alien-In-The-Middle
+    -------------------------------------------------------
+    Setiap huruf pesan diubah berdasarkan nilai posisi alfabet
+    dari huruf SEBELUMNYA yang ASLI (bukan hasil sandi).
+    Huruf pertama tidak berubah. A = 1, B = 2, ..., Z = 26.
+    Jika hasil pergeseran melewati Z, perhitungan kembali dari A
+    (wrap-around dengan modulo 26).
+
+    newValue = ((curValue - 1 + prevValue_asli) MOD 26) + 1
+
+    Hanya menggunakan <iostream>. Semua fungsi bantu (nilai huruf,
+    huruf dari nilai, panjang string) dibuat manual, tanpa <cstring>
+    atau library lain.
+*/
+
+#include <iostream>
+using namespace std;
+
+// Nilai posisi huruf dalam alfabet: A = 1, ..., Z = 26
+int letterValue(char c) {
+    return (c - 'A') + 1;
+}
+
+// Mengubah nilai posisi kembali menjadi huruf
+char valueToLetter(int v) {
+    return (char)('A' + (v - 1));
+}
+
+// Menghitung panjang C-string secara manual (pengganti strlen)
+int stringLength(char str[]) {
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+int main() {
+    char message[1000];
+
+    cout << "Masukkan pesan (huruf kapital A-Z, tanpa spasi): ";
+    cin >> message;
+
+    int n = stringLength(message);
+    char encoded[1000];
+
+    // Huruf pertama tidak berubah
+    encoded[0] = message[0];
+    int prevValue = letterValue(message[0]); // nilai huruf ASLI sebelumnya
+
+    for (int i = 1; i < n; i++) {
+        int curValue = letterValue(message[i]);
+        int newValue = ((curValue - 1 + prevValue) % 26) + 1;
+        encoded[i] = valueToLetter(newValue);
+
+        // Penting: pergeseran berikutnya memakai huruf ASLI,
+        // bukan huruf hasil sandi
+        prevValue = curValue;
+    }
+    encoded[n] = '\0';
+
+    cout << "\nPesan asli   : " << message << endl;
+    cout << "Pesan disandi: " << encoded << endl;
+
+    return 0;
+}
