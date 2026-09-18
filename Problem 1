@@ -1,0 +1,81 @@
+/*
+    Problem 1: The Last Astronaut
+    -------------------------------
+    N astronot berdiri melingkar, bernomor 1..N.
+    Perhitungan dimulai dari astronot nomor 1 (hitungan ke-1).
+    Astronot yang mendapat hitungan ke-K akan dieliminasi.
+    Setelah eliminasi, hitungan berikutnya dimulai dari astronot
+    tepat setelah posisi yang dieliminasi.
+
+    Aturan perubahan K setelah tiap eliminasi:
+      - nomor astronot yang dieliminasi genap -> K = K + 2
+      - nomor astronot yang dieliminasi ganjil -> K = K - 1
+      - K tidak boleh kurang dari 2 (jika < 2, K = 2)
+
+    Hanya menggunakan <iostream>. Fungsi penghapus elemen array
+    dibuat manual (user-defined), tanpa memakai library lain.
+*/
+
+#include <iostream>
+using namespace std;
+
+// Fungsi manual untuk menghapus elemen pada indeks idx dari array
+// dengan menggeser semua elemen setelahnya ke kiri satu posisi.
+void removeAt(int arr[], int &size, int idx) {
+    for (int i = idx; i < size - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+    size--;
+}
+
+int main() {
+    int n, k;
+
+    cout << "Masukkan jumlah astronot (N): ";
+    cin >> n;
+    cout << "Masukkan nilai awal K: ";
+    cin >> k;
+
+    // Buat lingkaran astronot bernomor 1..N
+    int *astronot = new int[n];
+    for (int i = 0; i < n; i++) {
+        astronot[i] = i + 1;
+    }
+
+    int size = n;
+    int idx = 0; // posisi awal hitungan = astronot nomor 1
+
+    cout << "\nUrutan astronot yang dieliminasi:\n";
+
+    while (size > 1) {
+        // Hitung posisi astronot ke-K dari posisi idx saat ini
+        idx = (idx + k - 1) % size;
+
+        int eliminated = astronot[idx];
+        cout << eliminated;
+        if (size > 1) cout << " -> ";
+
+        removeAt(astronot, size, idx);
+
+        // Perbarui nilai K sesuai aturan
+        if (eliminated % 2 == 0) {
+            k = k + 2;
+        } else {
+            k = k - 1;
+        }
+        if (k < 2) {
+            k = 2;
+        }
+
+        // Jika elemen yang dihapus berada di posisi terakhir,
+        // idx harus kembali ke 0 (posisi awal lingkaran)
+        if (idx == size) {
+            idx = 0;
+        }
+    }
+
+    cout << "\n\nAstronot yang bertahan (survivor): " << astronot[0] << endl;
+
+    delete[] astronot;
+    return 0;
+}
